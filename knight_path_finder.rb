@@ -1,7 +1,7 @@
 class KnightPathFinder
   
-  initialize(position)
-    @postiion = position
+  def initialize(position)
+    @parent_pos = Node.new(position)
     @visited_positions = [position]
     build_move_tree
   end
@@ -16,15 +16,18 @@ class KnightPathFinder
              [x-1, y-2],
              [x-2, y-1],
              [x-2, y+1]]
-    valid = moves.select { |el| el.first.between(0,7) && el.last.between(0,7) }
-    valid
+    valid = moves.select { |el| el.first.between?(0,7) && el.last.between?(0,7) }
+    valid.map { |el| Node.new(el) }
   end
   
   def build_move_tree
-    parent = @position 
-    children = new_move_positions(parent)
+    parent = @parent_pos 
+    children = new_move_positions(parent.value).each { |el| parent.add_child(el) }
   end
   
+  def no_possible
+    return false if new_move_positions(position)
+  end
   
   def new_move_positions(pos)
     possible = self.class.valid_moves(pos).reject { |move| @visited_positions.include?(move) }
