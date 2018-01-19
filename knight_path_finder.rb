@@ -1,8 +1,11 @@
+require "byebug"
 class KnightPathFinder
   
   def initialize(position)
     @parent_pos = Node.new(position)
-    @visited_positions = [position]
+    @visited_positions = []
+    #@visited_positions << @parent_pos
+    @visited_positions << position
     build_move_tree
   end
   
@@ -21,16 +24,27 @@ class KnightPathFinder
   end
   
   def build_move_tree
-    parent = @parent_pos 
-    children = new_move_positions(parent.value).each { |el| parent.add_child(el) }
+    queue = [@parent_pos]
+    until queue.empty?
+      parent = queue.shift
+      debugger
+      children = new_move_positions(parent.value)
+      children.each do |el| 
+        parent.add_child(el)
+        queue << el 
+      end
+    end
   end
   
-  def no_possible
-    return false if new_move_positions(position)
-  end
+  
+  
+  # def no_possible
+  #   return false if new_move_positions(position)
+  # end
   
   def new_move_positions(pos)
-    possible = self.class.valid_moves(pos).reject { |move| @visited_positions.include?(move) }
+    debugger
+    possible = self.class.valid_moves(pos).reject { |move| @visited_positions.include?(move.value) }
     @visited_positions += possible
     possible
   end
